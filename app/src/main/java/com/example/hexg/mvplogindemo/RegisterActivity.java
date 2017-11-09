@@ -6,53 +6,44 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.example.hexg.mvplogindemo.presenter.LoginPresenter;
+import com.example.hexg.mvplogindemo.presenter.RegisterPresenter;
 import com.example.hexg.mvplogindemo.util.SPUtil;
 import com.example.hexg.mvplogindemo.util.T;
 import com.example.hexg.mvplogindemo.view.ILoginView;
+import com.example.hexg.mvplogindemo.view.IRegisterView;
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener, ILoginView {
+public class RegisterActivity extends AppCompatActivity implements View.OnClickListener, IRegisterView {
 
-    private EditText username, password;
-    LoginPresenter presenter = new LoginPresenter(this);
+    private EditText username, password, password_confirm;
+    RegisterPresenter presenter = new RegisterPresenter(this);
     Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_register);
         init();
-        initData();
-    }
-
-    private void initData() {
-        if (SPUtil.hasAccountInfo(context)) {
-            presenter.login(context, null);
-        }
     }
 
     private void init() {
         context = this;
         username = (EditText) findViewById(R.id.username);
         password = (EditText) findViewById(R.id.password);
-        findViewById(R.id.btn_login).setOnClickListener(this);
+        password_confirm = (EditText) findViewById(R.id.password_confirm);
+        findViewById(R.id.btn_register).setOnClickListener(this);
         findViewById(R.id.btn_clear).setOnClickListener(this);
-        findViewById(R.id.tv_register).setOnClickListener(this);
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.btn_login:
-                presenter.login(context, view);
+            case R.id.btn_register:
+                presenter.register(context, view);
                 break;
             case R.id.btn_clear:
                 presenter.clear(context, view);
-                break;
-            case R.id.tv_register:
-                presenter.register();
                 break;
         }
     }
@@ -68,6 +59,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     @Override
+    public String getPdwConfirm() {
+        return password_confirm.getText().toString();
+    }
+
+    @Override
     public void clearUserName() {
         username.setText("");
     }
@@ -78,21 +74,40 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     @Override
+    public void clearPwdConfirm() {
+        password_confirm.setText("");
+    }
+
+    @Override
     public void showFailed() {
-        T.showShort(this, "登录失败");
+        T.showShort(this, "注册失败");
     }
 
     @Override
     public void toActivity() {
-        T.showShort(context, "登录成功");
-        startActivity(new Intent(this, MainActivity.class));
+        T.showShort(context, "注册成功");
+        startActivity(new Intent(this, LoginActivity.class));
         finish();
     }
 
     @Override
-    public void toRegister() {
-        startActivity(new Intent(this, RegisterActivity.class));
-        finish();
+    public void usernameIsEmpty() {
+        T.showShort(context, "请输入账户名");
+    }
+
+    @Override
+    public void pwdIsEmpty() {
+        T.showShort(context, "请输入密码");
+    }
+
+    @Override
+    public void pwdConfirmIsEmpty() {
+        T.showShort(context, "请输入确认密码");
+    }
+
+    @Override
+    public void pwdDifferent() {
+        T.showShort(context, "两次密码不同");
     }
 }
 

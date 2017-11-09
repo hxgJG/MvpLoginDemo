@@ -7,11 +7,16 @@ package com.example.hexg.mvplogindemo.view;
 public interface ILoginView {
 
     String getUsername();
+
     String getPdw();
+
     void clearUserName();
+
     void clearPwd();
+
     void showFailed();
+
     void toActivity();
-    void showProgress();
-    void hideProgress();
+
+    void toRegister();
 }
